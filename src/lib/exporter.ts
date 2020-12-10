@@ -9,7 +9,7 @@
 
 var defaultRowDelim = '\n';
 
-var os = process.platform;
+var os:string = process.platform;
 if (os == "darwin") {
 } 
 else if (os == "win32" || os == "win64") {
@@ -18,25 +18,31 @@ else if (os == "win32" || os == "win64") {
 else if (os == "linux") {
 }
 
-function TableExporter ($)  {
+export class TableExporter  {
+    public $: any;
+    private table: any;
 
-    this.$ = $;
+    constructor($: any) {
+        this.$ = $;
+
+        this.table = null;
+    }
 
     // Grab and format a row from the table
-    function grabRow(i, row){
+    grabRow(i, row){
             
-        var $row = $(row);
+        var $row = this.$(row);
         //for some reason $cols = $row.find('td') || $row.find('th') won't work...
         var $cols = $row.find('td'); 
         if(!$cols.length) $cols = $row.find('th');  
 
-        return $cols.map(grabCol)
-                    .get().join(tmpColDelim);
+        return $cols.map(this.grabCol)
+                    .get().join(defaultRowDelim);
     }
 
     // Grab and format a column from the table 
-    function grabCol(j,col){
-        var $col = $(col),
+    grabCol(j,col){
+        var $col = this.$(col),
             $text = $col.text();
 
         return $text.replace('"', '""'); // escape double quotes
@@ -48,25 +54,25 @@ function TableExporter ($)  {
     //------------------------------------------------------------
 
     // Grab and format a row from the table
-    function toColumns(rowIndex, row, tableIndex, cellSelector, targetSelector, selectorProcessor) {
+    toColumns(rowIndex, row, tableIndex, cellSelector, targetSelector, selectorProcessor) {
 
-        var $row = $(row);
+        var $row = this.$(row);
         //for some reason $cols = $row.find('td') || $row.find('th') won't work...
         var $cols = $row.find(cellSelector); 
         // if(!$cols.length) $cols = $row.find('th');  
 
-        var colArray = [];
+        var colArray:any[] = [];
 
         $cols.each((colIndex, col) => {
-            var $col = $(col),
+            var $col = this.$(col),
                 $text = $col.text().trim();
 
             var obj;
 
             if (targetSelector && selectorProcessor) {
-                var $nodes = $(targetSelector, col);
+                var $nodes = this.$(targetSelector, col);
                 if ($nodes.length > 0) {
-                    obj = selectorProcessor($, $nodes, rowIndex, colIndex, tableIndex);                   
+                    obj = selectorProcessor(this.$, $nodes, rowIndex, colIndex, tableIndex);                   
                 }
             }
 
@@ -83,15 +89,14 @@ function TableExporter ($)  {
     }
 
     // Grab and format a column from the table 
-    function toColumn(j, col){
-        var $col = $(col),
+    toColumn(j, col){
+        var $col = this.$(col),
             $text = $col.text().trim();
 
         return $text; // .replace('"', '""'); // escape double quotes not here, because it is text
 
     }
 
-    this.table = null;
 
     /**
      * Table to JSON
@@ -115,10 +120,15 @@ function TableExporter ($)  {
      * 
      */
 
-    this.export = function ($table, tableIndex, selector, callback) {
+    export ($table, tableIndex, selector, callback) {
+        let self = this;
         this.table = {};
 
-        var targetSelector = null, rowSelector = null, headerSelector = null, headerRowSelector = null, cellSelector = null;
+        var targetSelector:string | null  = null, 
+            rowSelector:string | null = null, 
+            headerSelector:string | null  = null, 
+            headerRowSelector:string | null  = null, 
+            cellSelector:string | null  = null;
         var selectors;
 
         if (typeof selector === "function") {
@@ -157,7 +167,7 @@ function TableExporter ($)  {
             }
         }
 
-        var findHeaderSelector = null;
+        var findHeaderSelector:string | null  = null;
 
         if (headerRowSelector === null) {
             if (headerSelector === 'th')
@@ -171,14 +181,15 @@ function TableExporter ($)  {
             headerSelector = headerSelector || 'th';
             findHeaderSelector = headerRowSelector + ':has(' + headerSelector + ')';
         }
-        var $headerRow = null;
+        // jquery function
+        let $headerRow:any = null;
         if (findHeaderSelector) {
             $headerRow = $table.find(findHeaderSelector);
-            if ($headerRow.length) {
+            if ($headerRow && $headerRow.length) {
                 var $headers = $headerRow.find(headerSelector);
                 
                 var headersMap = $headers.map(function(index, header) {
-                    return toColumn(index, header);
+                    return self.toColumn(index, header);
                 });
                 var headers = headersMap.get();
                 if (headers.length > 0)
@@ -206,12 +217,12 @@ function TableExporter ($)  {
      * 
      */
 
-    this.exportRows = function (tableIndex, $rows, cellSelector, targetSelector, callback) {
+    exportRows (tableIndex, $rows, cellSelector, targetSelector?, callback?) {
         var self = this;
-        var rows = [];
+        var rows:any[] = [];
 
         $rows.each(function(rowIndex, $row) {
-            var ret = self.exportRow(tableIndex, rowIndex, $row, cellSelector, targetSelector, callback);
+            var ret:any = self.exportRow(tableIndex, rowIndex, $row, cellSelector, targetSelector, callback);
             rows.push(ret);
         });
         return rows;
@@ -221,14 +232,14 @@ function TableExporter ($)  {
      * 
      */
 
-    this.exportRow = function (tableIndex, rowIndex, row, cellSelector, targetSelector, cellProcessor) {
+    exportRow (tableIndex, rowIndex, row, cellSelector, targetSelector, cellProcessor) {
         var self = this;
 
         cellSelector = cellSelector || 'td';
 
         var $cols = self.$(row).find(cellSelector);
 
-        var cols = [];
+        var cols:any[] = [];
 
         $cols.each((colIndex, col) => {
 
@@ -241,7 +252,7 @@ function TableExporter ($)  {
                 //}
             }           
             
-             var $text = toColumn(colIndex, col);
+             var $text = self.toColumn(colIndex, col);
 
             if (obj) {
                 obj.text = $text;
@@ -256,5 +267,3 @@ function TableExporter ($)  {
         return cols;
     }
 }
-
-module.exports = TableExporter;

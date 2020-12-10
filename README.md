@@ -80,8 +80,7 @@ browserify web.js -o web/te.js
 ```
 
 ## Chrome Extension
-
-
+Please go the chrome folder, and manually install the extension
 ## Maintainer
 
 [Eric Tang](https://twitter.com/_e_tang) @ [TYO Lab](http://tyo.com.au)

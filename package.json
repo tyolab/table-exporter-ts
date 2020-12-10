@@ -1,12 +1,26 @@
 {
-  "name": "table-exporter",
-  "version": "0.0.11",
+  "name": "table-exporter-ts",
+  "version": "0.0.1",
   "description": "Export HTML Table (Table Tag, Table CSS) to a file (JSON, CSV, etc.)",
-  "main": "index.js",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "export": "./bin/export_table.js",
-    "browserify": "browserify web.js -o web/te.js"
+    "browserify": "browserify web.js -o web/te.js",
+    "c": "npm run clean",
+    "clean": "rm -rf build/*",
+    "b": "npm run build",
+    "build": "tsc",
+    "clean-build": "rm -rf build/* && tsc",
+    "build:watch": "tsc --watch",
+    "clean-build:watch": "rm -rf build/* && tsc --watch",
+    "t": "npm run test",
+    "test": "nyc mocha --opts ./src/test/mocha.opts",
+    "tw": "npm run test:watch",
+    "test:watch": "nyc mocha --watch --opts ./src/test/mocha.opts",
+    "api-docs": "typedoc --options typedoc.json --out docs/api ./src/index.ts",
+    "prepublishOnly": "npm run clean && npm run build",
+    "coveralls": "nyc report --reporter=text-lcov | coveralls"
   },
   "bin": {
     "export-table": "./bin/export_table.js",
@@ -14,7 +28,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/tyolab/table-exporter.git"
+    "url": "git+ssh://git@github.com/tyolab/table-exporter-ts.git"
   },
   "keywords": [
     "HTML",
@@ -27,11 +41,11 @@
     "transformation"
   ],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/tyolab/table-exporter/issues"
+    "url": "https://github.com/tyolab/table-exporter-ts/issues"
   },
-  "homepage": "https://github.com/tyolab/table-exporter#readme",
+  "homepage": "https://github.com/tyolab/table-exporter-ts#readme",
   "dependencies": {
     "cheerio": "^0.22.0",
     "node-programmer": "^0.0.19",
@@ -49,5 +63,8 @@
     "web.js",
     "functions.js",
     "package.json"
-  ]
+  ],
+  "devDependencies": {
+    "@types/node": "^14.14.11"
+  }
 }
