@@ -4,12 +4,12 @@
  * Making a table with css
  */
 
-const Table = require('../lib/table');
+import Table from './table';
 
-const util = require('util');
+class TableHtmlTable extends Table {
 
-function TableHtmlTable(inColDelim, inRowDelim) {
-    Table.call(this, inColDelim, inRowDelim);
+    constructor(inColDelim, inRowDelim) {
+        super(inColDelim, inRowDelim);
 
     this.classCellDivider = null; 
     this.classTable = '';
@@ -20,35 +20,34 @@ function TableHtmlTable(inColDelim, inRowDelim) {
     this.classRow = '';        
 }
 
-util.inherits(TableHtmlTable, Table);
 
-TableHtmlTable.prototype.makeCellDiv = function(index, cellData, styleStr) {
+makeCellDiv (index, cellData, styleStr) {
     return `<td class="${styleStr || ''} col-${index}">${cellData}</td>`;
 }
 
-TableHtmlTable.prototype.makeRowDiv = function(cols, joined_by) {
+makeRowDiv (cols, joined_by) {
     return `<tr class="${this.classRow}" style="${this.styleRow}">`
                                  + cols.join(joined_by ||' \n') +
                                 `</tr>`;
 }
 
-TableHtmlTable.prototype.makeHeaderDiv = function(headers, joined_by) {
+makeHeaderDiv (headers, joined_by) {
     return `<tr class="${this.classTableHeader}">` + 
     headers.join(joined_by || " \n") +
 `</tr>`;
 }
 
-TableHtmlTable.prototype.makeCellDividerDiv = function() {
+makeCellDividerDiv () {
     if (this.classCellDivider)
         return `<div class="${this.classCellDivider}"></div>`;
     return '';
 }
 
-TableHtmlTable.prototype.makeHeaderCellDiv = function(index, headerCol) {
+makeHeaderCellDiv (index, headerCol) {
     return (`<th class="${this.classHeaderCell} col-${index}">${headerCol}</th>`);
 }
 
-TableHtmlTable.prototype.makeTableDiv = function(rows, joined_by) {
+makeTableDiv (rows, joined_by) {
     return  (
         `<table class="${this.classTable}">`
             +
@@ -57,5 +56,6 @@ TableHtmlTable.prototype.makeTableDiv = function(rows, joined_by) {
         `</table>`
     );
 }
+}
 
-module.exports = TableHtmlTable;
+export default TableHtmlTable;

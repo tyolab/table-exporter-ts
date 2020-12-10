@@ -11,12 +11,13 @@
 //------------------------------------------------------------
 // Format the output so it has the appropriate delimiters
 function isWindows() {
+    // @ts-ignore
     return typeof navigator !== 'undefined' && navigator && navigator.platform && navigator.platform.indexOf('Win') > -1
 }
 
 const defaultRowDelim = isWindows() ? '\r\n' : '\n';
 
-function formatRows(rows, colDelim, rowDelim) {
+function formatRows(rows, colDelim?, rowDelim?) {
     colDelim = colDelim || ',';
     rowDelim = rowDelim || defaultRowDelim;
 
@@ -25,13 +26,13 @@ function formatRows(rows, colDelim, rowDelim) {
         .split(colDelim).join(colDelim);
 }
 
-function formatHeader(rows, colDelim) {
+function formatHeader(rows, colDelim?) {
     colDelim = colDelim || ',';
 
     return rows.join(colDelim);
 }
 
-function newFormatRows(rows, colDelim, rowDelim) {
+function newFormatRows(rows, colDelim?, rowDelim?) {
     colDelim = colDelim || ',';
     rowDelim = rowDelim || defaultRowDelim;
 
@@ -40,33 +41,36 @@ function newFormatRows(rows, colDelim, rowDelim) {
         .split(colDelim).join(colDelim);
 }
 
- function Table(inColDelim, inRowDelim) {
+class Table {
+    public classTable = "data-table";
+    public classCellDivider:string | null = "data-table-cell-divider";
+    public classHeaderCell = "data-table-header-cell";
+    public classTableHeader = "data-table-header";
+    public classCell = 'data-table-cell';
+    public classRow = 'data-table-row';
+    protected tmpColDelim: any;
+    protected tmpRowDelim: any;
 
-    var
+    public splitToColumnGroupSize: number = 0;
+    public headers: any = null;
+
+    public styleRow = '';
+
+    // Rows
+    public data_index = 0;
+
+    constructor (inColDelim, inRowDelim) {
+
     // Temporary delimiter characters unlikely to be typed by keyboard
     // This is to avoid accidentally splitting the actual contents
-    tmpColDelim = inColDelim || String.fromCharCode(11) // vertical tab character
-    ,tmpRowDelim = inRowDelim || String.fromCharCode(0) // null character
-
-    // styles
-    this.classTable = "data-table";
-    this.classCellDivider = "data-table-cell-divider";
-    this.classHeaderCell = "data-table-header-cell";
-    this.classTableHeader = "data-table-header";
-    this.classCell = 'data-table-cell';
-    this.classRow = 'data-table-row';
-
-    this.styleRow = '';
-
-    
-    // Rows
-    this.data_index = 0;
+    this.tmpColDelim = inColDelim || String.fromCharCode(11); // vertical tab character
+    this.tmpRowDelim = inRowDelim || String.fromCharCode(0); // null character
 };
 
  
 //
-Table.prototype.createTableHeader = function(headerRow, groupsSize) {
-    var headers = [];
+createTableHeader(headerRow, groupsSize) {
+    var headers:any[] = [];
     groupsSize = groupsSize || 1;
     for (var g = 0; g < groupsSize; ++g) {
         if (g > 0)
@@ -82,31 +86,31 @@ Table.prototype.createTableHeader = function(headerRow, groupsSize) {
 
 }; 
  
-Table.prototype.makeCellDiv = function(index, cellData, styleStr) {
+makeCellDiv(index, cellData, styleStr?) {
     return `<div class="${styleStr}">${cellData}</div>`;
 }
 
-Table.prototype.makeRowDiv = function(cols, joined_by) {
+makeRowDiv(cols, joined_by?) {
     return `<div class="${this.classRow}" style="${this.styleRow}">`
                                  + cols.join(joined_by ||' \n') +
                                 `</div>`;
 }
 
-Table.prototype.makeHeaderDiv = function(headers, joined_by) {
+makeHeaderDiv(headers, joined_by?) {
     return `<div class="${this.classTableHeader}">` + 
     headers.join(joined_by || " \n") +
 `</div>`;
 }
 
-Table.prototype.makeCellDividerDiv = function() {
+makeCellDividerDiv() {
     return `<div class="${this.classCellDivider}"></div>`;
 }
 
-Table.prototype.makeHeaderCellDiv = function(index, headerCol) {
+makeHeaderCellDiv(index, headerCol) {
     return (`<div class="${this.classHeaderCell}">${headerCol}</div>`);
 }
 
-Table.prototype.makeTableDiv = function(rows, joined_by) {
+makeTableDiv(rows, joined_by?) {
     return  (
         `<div class="${this.classTable}">`
             +
@@ -120,13 +124,13 @@ Table.prototype.makeTableDiv = function(rows, joined_by) {
  * If you need to make an empty table with just headers
  * you need to pass on (headers, []) // 
  */
-Table.prototype.makeHtmlTable = function(headers, rows, joined_by) {
+makeHtmlTable(headers, rows, joined_by?) {
     if (!rows && headers && headers.length) {
         rows = headers;
         headers = null;
     }
 
-    var table_array = [];
+    var table_array:any[] = [];
 
     if (rows && rows.length) {
         var rowsSize = rows.length;
@@ -142,7 +146,7 @@ Table.prototype.makeHtmlTable = function(headers, rows, joined_by) {
 
         // Rows
         for (var x = this.data_index; x < rowsSize;) {
-            var cols = [];
+            var cols:any[] = [];
             
             // can't remember the purpose of this style
             // const styleStr = this.classCell + ((x > 1 && (x % 2) === 0) ? '2' : '');
@@ -175,14 +179,18 @@ Table.prototype.makeHtmlTable = function(headers, rows, joined_by) {
     return this.makeTableDiv(table_array);
 }
 
+prepareTable() {
+
+}
+
 /**
  */
-Table.prototype.makeHtmlTables = function (tableObj, headerInRowIndex) {
+makeHtmlTables (tableObj, headerInRowIndex) {
     this.prepareTable();
 
     headerInRowIndex = headerInRowIndex || -1;
 
-    var tables = [];
+    var tables:any[] = [];
 
     for (var sheetName in tableObj) {
         var data = tableObj[sheetName];
@@ -204,12 +212,12 @@ Table.prototype.makeHtmlTables = function (tableObj, headerInRowIndex) {
 }
 
 
-Table.prototype.generate_csv = function (table, cellDelim, rowDelim) {
+generate_csv (table, cellDelim, rowDelim) {
 
     // Grab text from table into CSV formatted string
     var csv = '';
     if (table.headers) {
-        csv += formatHeader(table.headers, cellDelim, rowDelim);
+        csv += formatHeader(table.headers, cellDelim);
         csv += (rowDelim || defaultRowDelim);
     }
     if (table.rows && table.rows.length)
@@ -218,18 +226,19 @@ Table.prototype.generate_csv = function (table, cellDelim, rowDelim) {
     return csv;
 }   
 
-Table.prototype.exportTableToCSV = function($table) {
-    var $headers = $table.find('tr:has(th)')
-        ,$rows = $table.find('tr:has(td)')
+// exportTableToCSV($table) {
+//     var $headers = $table.find('tr:has(th)')
+//         ,$rows = $table.find('tr:has(td)')
 
 
-    // Grab text from table into CSV formatted string
-    var csv = '"';
-    csv += formatRows($headers.map(grabRow));
-    csv += rowDelim;
-    csv += formatRows($rows.map(grabRow)) + '"';
+//     // Grab text from table into CSV formatted string
+//     var csv = '"';
+//     csv += formatRows($headers.map(grabRow));
+//     csv += rowDelim;
+//     csv += formatRows($rows.map(grabRow)) + '"';
     
-    return csv;
+//     return csv;
+// }
 }
 
- module.exports = Table;
+export default Table;

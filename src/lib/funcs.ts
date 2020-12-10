@@ -3,13 +3,16 @@
  *   @author Eric Tang (twitter: @_e_tang).
  */
 
-module.exports.toPath = function ($node) {
-    var parents = [];
+function toPath  ($node) {
+    var parents:any[] = [];
 
     $node.parents().addBack().not('html').each(function() {
 
+        // @ts-ignore
         var entry = this.tagName.toLowerCase();
+        // @ts-ignore
         if (this.className) {
+            // @ts-ignore
             entry += "." + this.className.replace(/ /g, '.');
             }
             parents.push(entry);
@@ -17,3 +20,5 @@ module.exports.toPath = function ($node) {
 
     return parents.join(" ");
 }
+
+export default toPath;
