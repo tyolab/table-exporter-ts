@@ -6,7 +6,7 @@ var ExportJob = require('./export');
 var Params = require('node-programmer/params');
 
 function showUsage() {
-    console.log('usage: node  ' + __filename + ' url/file' + `
+    console.log('Usage: node  ' + __filename + ' url/file' + `
         \nAvailable Options:
         \t\t\t[--table-selector table-selector] 
         \t\t\t[--header-selector header-selector] 

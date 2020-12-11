@@ -5,7 +5,8 @@
  */
 
 var fs = require('fs');
-var exporter = require('../index');
+const Exporter = require('../dist').default;
+var exporter = new Exporter();
 var request = require('request');
 
 function exportFile(html, exportFn, opts) {

@@ -38,6 +38,8 @@
             "request": "launch",
             "name": "Test with spreads.html",
             "program": "${workspaceFolder}/bin/export_table.js",
+            "preLaunchTask": "tsc: build - tsconfig.json",
+            "outFiles": ["${workspaceFolder}/dist/**/*.js"],
             "args": [
                 "${workspaceFolder}/test/spreads.html",
                 //"--output-name", "table",
