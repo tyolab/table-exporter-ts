@@ -16,7 +16,7 @@ function exportFile(html, exportFn, opts) {
         function (tableIndex, row, col, $node, cols) {
             if (tableIndex == 1) {
                 console.debug('processing table:' + tableIndex + ', row: ' + row + ', col: ' + col);
-                var content = "";
+                var content = null;
                 try {
                     if ($node[0].children[0].attribs && $node[0].children[0].attribs.src)
                         content = $node[0].children[0].attribs.src; // $('img', $node).attr('src');
