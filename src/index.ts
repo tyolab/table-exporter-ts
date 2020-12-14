@@ -14,7 +14,7 @@ function isInBrowser() {
 }
 class Exporter {
     public $: any;
-    public in_browser: boolean;
+    public use_cheerio: boolean;
     public environment: string | null;
     public table_exporter: any;
     public $node: any;                      // the root node for the selector
@@ -22,13 +22,13 @@ class Exporter {
     constructor() {
         this.$ = null;
         this.$node = null;
-        this.in_browser = false;
+        this.use_cheerio = false;
         this.environment = null;   
     }
 
     initialize(is_in_browser) {
-        this.in_browser = is_in_browser;
-        this.environment = (this.in_browser ? "browser" : "node"); 
+        this.use_cheerio = is_in_browser;
+        this.environment = (this.use_cheerio ? "browser" : "node"); 
     }
 
     export (html, tableSelector, selectors, findProcessor) {
@@ -51,13 +51,13 @@ class Exporter {
             var exporter = new TableExporter(this.$);
             var i = 0;
     
-            var rows = exporter.exportRows(this.in_browser ? this.$(this) : this.$node(this), selector, findProcessor);
+            var rows = exporter.exportRows(this.use_cheerio ? this.$(this) : this.$node(this), selector, findProcessor);
     
             return rows;
         }
     
     getQuery (selector, parent?:any) {
-        if (this.in_browser) {
+        if (this.use_cheerio) {
             if (typeof this.$ === 'undefined') {
                 // @ts-ignore
                 var se = document.createElement('script'); 
