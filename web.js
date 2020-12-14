@@ -3,9 +3,11 @@
  *   All rights reserved.
  */
 var _te = _te || {};
-var tyo_data = require('.');
+const Exporter = require('./dist').default;
+var tyo_data = new Exporter();
+tyo_data.in_browser = true;
 
-const table_util = require('./utils/table_util');
+const table_util = require('./dist/utils/table_util');
 
 function get_table_selector ($temp, level) {
     var $table;

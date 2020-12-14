@@ -1,4 +1,11 @@
 
+/*
+ *   Copyright (c) 2020 TYO Lab
+ *   @author Eric Tang (twitter: @_e_tang).
+ *
+ *   @file index.ts
+ */
+
 import { TableExporter } from './lib';
 
 function isInBrowser() {
@@ -10,9 +17,11 @@ class Exporter {
     public in_browser: boolean;
     public environment: string | null;
     public table_exporter: any;
+    public $node: any;                      // the root node for the selector
 
     constructor() {
-        this.$ = null;     
+        this.$ = null;
+        this.$node = null;
         this.in_browser = false;
         this.environment = null;   
     }
@@ -24,7 +33,7 @@ class Exporter {
 
     export (html, tableSelector, selectors, findProcessor) {
 
-        this.$ = this.getQuery(html);
+        this.$node = this.getQuery(html);
     
         return this.exportNode(this.$, tableSelector, selectors, findProcessor);
     }
@@ -37,12 +46,12 @@ class Exporter {
     
             findProcessor = findProcessor || this.linkProcessor.bind(this);
     
-            var $ = this.getQuery(html);
+            var $node = this.getQuery(html);
     
-            var exporter = new TableExporter($);
+            var exporter = new TableExporter(this.$);
             var i = 0;
     
-            var rows = exporter.exportRows($(this), selector, findProcessor);
+            var rows = exporter.exportRows(this.in_browser ? this.$(this) : this.$node(this), selector, findProcessor);
     
             return rows;
         }
@@ -60,8 +69,10 @@ class Exporter {
                 var s = document.getElementsByTagName('script')[0]; 
                 s.parentNode.insertBefore(se, s);
             }
-            // @ts-ignore
-            this.$ = $;
+            if (!this.$) {
+                // @ts-ignore
+                this.$ = $;
+            }
             return this.$(selector || 'html', parent);
         }
         else {
@@ -95,29 +106,30 @@ class Exporter {
      * Export from parsed node by jQuery or Cheerio
      */
     
-    exportNode (node, tableSelector, selectors, findProcessor) {
+    exportNode (_$, tableSelector, selectors, findProcessor) {
         var self = this;
     
         var result:any = {};
         var tables:any[] = [];
     
-        function processNode($node) {
-            var exporter = new TableExporter($node);
+        function processNode() {
+            // when in the browser, we use jquery
+            var exporter = new TableExporter(_$);
             var i = 0;
     
             var $tables;
-            if (typeof node === 'object' && !tableSelector)
+            if (typeof _$ === 'object' && !tableSelector)
                 // tableSelector should be set before calling this method
-                $tables = node;
+                $tables = _$;
             else {
                     // if table selector is not set, we would just table
                 tableSelector = tableSelector || "table";
-                $tables = self.in_browser ? self.getQuery(tableSelector, $node) : $node(tableSelector);
+                $tables = _$(tableSelector); // self.in_browser ? self.getQuery(tableSelector, $node) : $node(tableSelector);
             }
     
             $tables.each(function(index, table) {
                 // @ts-ignore
-                var $table = self.getQuery(table || this);
+                var $table = _$(table || this);
                 var table:any = exporter.export($table, i, selectors, findProcessor);
                 if (null != table)
                     tables.push(table);
@@ -128,7 +140,7 @@ class Exporter {
             result.exporter = exporter;
             return result;
         }
-        return processNode(node);
+        return processNode();
     }    
 }
 

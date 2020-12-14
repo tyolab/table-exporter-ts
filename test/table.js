@@ -3,7 +3,7 @@ const fs = require('fs');
 
 const path = require('path');
 
-const table_util = require('../utils/table_util');
+const table_util = require('../dist/utils/table_util');
 
 var data_file = path.resolve(__dirname, 'table.json');
 

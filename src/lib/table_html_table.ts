@@ -8,7 +8,7 @@ import Table from './table';
 
 class TableHtmlTable extends Table {
 
-    constructor(inColDelim, inRowDelim) {
+    constructor(inColDelim?: string, inRowDelim?: string) {
         super(inColDelim, inRowDelim);
 
     this.classCellDivider = null; 

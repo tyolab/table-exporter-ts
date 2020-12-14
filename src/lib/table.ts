@@ -59,7 +59,7 @@ class Table {
     // Rows
     public data_index = 0;
 
-    constructor (inColDelim, inRowDelim) {
+    constructor (inColDelim?: string, inRowDelim?: string) {
 
     // Temporary delimiter characters unlikely to be typed by keyboard
     // This is to avoid accidentally splitting the actual contents

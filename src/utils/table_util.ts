@@ -2,9 +2,9 @@
  *   Copyright (c) 2020 
  *   @author Eric Tang (twitter: @_e_tang).
  */
-const Table = require('../lib/table');
-const TableHtmlTable = require('../lib/table_html_table');
-const TableHtmlList = require('../lib/table_html_list');
+import Table from '../lib/table';
+import TableHtmlTable from '../lib/table_html_table';
+import TableHtmlList from '../lib/table_html_list';
 
 const table_util = {
     table: new Table(),

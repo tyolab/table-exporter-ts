@@ -7,7 +7,7 @@
 import Table from './table';
 
 class TableHtmlList extends Table {
-    constructor(inColDelim, inRowDelim) {
+    constructor(inColDelim?: string, inRowDelim?: string) {
         super(inColDelim, inRowDelim);
 
     this.classCellDivider = null; 

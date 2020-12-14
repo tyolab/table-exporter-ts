@@ -24,7 +24,6 @@ export class TableExporter  {
 
     constructor($: any) {
         this.$ = $;
-
         this.table = null;
     }
 
@@ -41,7 +40,7 @@ export class TableExporter  {
     }
 
     // Grab and format a column from the table 
-    grabCol(j,col){
+    grabCol(j, col){
         var $col = this.$(col),
             $text = $col.text();
 
@@ -64,9 +63,7 @@ export class TableExporter  {
         var colArray:any[] = [];
 
         $cols.each((colIndex, col) => {
-            var $col = this.$(col),
-                $text = $col.text().trim();
-
+            var $col = this.$(col);
             var obj;
 
             if (targetSelector && selectorProcessor) {
@@ -76,6 +73,7 @@ export class TableExporter  {
                 }
             }
 
+            let $text = $col.text().trim();
             if (obj) {
                 obj.text = $text;
             }
@@ -252,7 +250,7 @@ export class TableExporter  {
             if (obj)
                 cols.push(obj);
             else {
-                var $text = self.toColumn(colIndex, col);
+                var $text = (self.toColumn(colIndex, col) || '').trim();
                 cols.push($text);
             }
         });

@@ -1,6 +1,6 @@
 {
   "name": "table-exporter-ts",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Export HTML Table (Table Tag, Table CSS) to a file (JSON, CSV, etc.)",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -62,7 +62,8 @@
     "utils/",
     "web.js",
     "functions.js",
-    "package.json"
+    "package.json",
+    "dist/"
   ],
   "devDependencies": {
     "@types/node": "^14.14.11"
