@@ -115,12 +115,12 @@ export class TableExporter  {
      * 
      * @param $table
      * @param k
-     * @param selector array for targetSelector, rowSelector, headerSelector, cellSelector
+     * @param options array for targetSelector, rowSelector, headerSelector, cellSelector
      * @param callback
      * 
      */
 
-    export ($table, tableIndex, selector, callback) {
+    export($table, tableIndex, options, callback) {
         let self = this;
         this.table = {};
 
@@ -131,24 +131,24 @@ export class TableExporter  {
             cellSelector:string | null  = null;
         var selectors;
 
-        if (typeof selector === "function") {
-            callback = selector;
-            selector = null;
+        if (typeof options === "function") {
+            callback = options;
+            options = null;
         }
 
-        if (null != selector) {
-            if (typeof selector === 'object' && !Array.isArray(selector)) {
-                targetSelector = selector["target-selector"] || null;
-                cellSelector = selector["cell-selector"] || null;
-                headerSelector = selector["header-selector"] || null;
-                rowSelector = selector["row-selector"] || null;
-                headerRowSelector = selector["header-row-selector"] || null;
+        if (null != options) {
+            if (typeof options === 'object' && !Array.isArray(options)) {
+                targetSelector = options["target-selector"] || null;
+                cellSelector = options["cell-selector"] || null;
+                headerSelector = options["header-selector"] || null;
+                rowSelector = options["row-selector"] || null;
+                headerRowSelector = options["header-row-selector"] || null;
             }
             else {
-                if (Array.isArray(selector))
-                    selectors = selector;
+                if (Array.isArray(options))
+                    selectors = options;
                 else
-                    selectors = [selector];
+                    selectors = [options];
 
                 switch (selectors.length) {
                     case 5:
@@ -202,7 +202,7 @@ export class TableExporter  {
           findRowsSelector += ':has(' + cellSelector + ')'; 
         else if (findRowsSelector === 'tr')
             findRowsSelector += ':has(td)';
-            
+
         var $rows = $table.find(findRowsSelector);
 
         if ($rows.length) {
@@ -244,24 +244,17 @@ export class TableExporter  {
         $cols.each((colIndex, col) => {
 
             var obj;
-
             if (cellProcessor) {
-                //var $node = self.$(targetSelector, col);
-                //if ($node.length > 0) {
-                    obj = cellProcessor(tableIndex, rowIndex, colIndex, self.$(col), cols);                   
-                //}
-            }           
-            
-             var $text = self.toColumn(colIndex, col);
-
-            if (obj) {
-                obj.text = $text;
-            }
+                // There is something we need process accordingly because there might not just text interests you
+                // if there is something returned, we push it into the column
+                obj = cellProcessor(tableIndex, rowIndex, colIndex, self.$(col), cols);
+            }          
+            if (obj)
+                cols.push(obj);
             else {
-                obj = $text;
+                var $text = self.toColumn(colIndex, col);
+                cols.push($text);
             }
-
-            cols.push(obj);
         });
         
         return cols;

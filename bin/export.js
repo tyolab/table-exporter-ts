@@ -12,11 +12,49 @@ var request = require('request');
 function exportFile(html, exportFn, opts) {
     var result = exportFn(html, opts['table-selector'], opts 
         /**for debug */
-        // ,
-        // function (tableIndex, row, col, $node, cols) {
-        //     if (tableIndex == 2)
-        //         console.debug('processing table:' + tableIndex + ', row: ' + row + ', col: ' + col);
-        // }
+        ,
+        function (tableIndex, row, col, $node, cols) {
+            if (tableIndex == 1) {
+                console.debug('processing table:' + tableIndex + ', row: ' + row + ', col: ' + col);
+                var content = "";
+                try {
+                    if ($node[0].children[0].attribs && $node[0].children[0].attribs.src)
+                        content = $node[0].children[0].attribs.src; // $('img', $node).attr('src');
+                    else if ($node[0].children[0].data)
+                        content = $node[0].children[0].data;
+                    else
+                        return null;
+                        
+                    if (col == 1) {
+                        // we are interested in the link
+                    }
+                    else if (col == 3) {
+                        if (content.match(/:\/\//g))
+                            // we are interested in the number in the link
+                            try {
+                                let url = new URL(content);
+                                let tokens = url.pathname.split('/');
+                                let filename = tokens.pop() || tokens.pop();
+                                let nums = filename.split('.');
+                                content = nums[0];
+                            }
+                            catch(err) {
+                                console.error(err);
+                            }
+                    }
+                }
+                catch (err) {
+                    console.error(err);
+                    try {
+                        content = $node[0].children[0].data;
+                    }   
+                    catch(err2) {
+                        console.error(err2);
+                    }
+                }
+                return content;
+            }
+        }
     );
 
     if (result.tables && result.tables.length && result.tables.length > 0) {

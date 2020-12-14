@@ -18,13 +18,17 @@
             "request": "launch",
             "name": "Test with table html",
             "program": "${workspaceFolder}/bin/export_table.js",
-            "args": ["${workspaceFolder}/test/Charts.html"]
+            "preLaunchTask": "tsc: build - tsconfig.json",
+            "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+            "args": ["${workspaceFolder}/test/index.html"]
         },
         {
             "type": "node",
             "request": "launch",
             "name": "Test with div_table.html",
             "program": "${workspaceFolder}/bin/export_table.js",
+            "preLaunchTask": "tsc: build - tsconfig.json",
+            "outFiles": ["${workspaceFolder}/dist/**/*.js"],
             "args": [
                 "${workspaceFolder}/test/div_table.html",
                 "--table-selector", ".rTable",
