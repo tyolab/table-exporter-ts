@@ -7,6 +7,20 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Manupulate Table",
+            "runtimeArgs": [
+                "-r",
+                "ts-node/register"
+            ],            
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            // "program": "${workspaceFolder}/utils/markets_monitor.ts",
+            "args": ["${workspaceFolder}/src/table.ts", "--col", "3", "--col-len", "3", "--suffix", "Code:.ASX", "/data/tyolab/node/tyostocks/data/markets/asx.csv"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Launch table.js Program",
             "program": "${workspaceFolder}/test/table.js",
             "skipFiles": [
